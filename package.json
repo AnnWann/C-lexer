@@ -1,0 +1,24 @@
+{
+  "name": "lexer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "run": "node main.js test.txt",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnnWann/lexer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnnWann/lexer/issues"
+  },
+  "homepage": "https://github.com/AnnWann/lexer#readme",
+  "dependencies": {
+    "node": "^20.14.0",
+    "npm": "^10.8.1"
+  }
+}
