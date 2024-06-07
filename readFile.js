@@ -6,6 +6,7 @@ function readFile(fileName, callback){
     if (err) {
       return callback(err);
     }
+    console.log(data.length)
     return callback(null, data);
   });
 }
