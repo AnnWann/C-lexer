@@ -32,16 +32,16 @@ const regex_tokens = new Map ([
 ]);
 
 const regex_stopping_signs = new Map ([
-  ['empty space', /\s/],
-  ['letters and numbers', /[A-Za-z_0-9_]/],
-  ['punctuation', /\{|\}|\(|\)|\[|\]|;|.|,|:/],
-  ['double quote', /"/],
-  ['single_quote', /'/],
-  ['m_comment_s', /\/\*/],
-  ['m_comment_e', /\*/],
-  ['s_comment', /\/\//],
-  ['line_b', /\n/],
-  ['operators', /=|!|<|>|\+|-|\*\/|>|<|\||&/],
+  [/\s/, 'empty space'],
+  [/[A-Za-z_0-9_]/, 'letters and numbers'],
+  [/\{|\}|\(|\)|\[|\]|;|.|,|:/, 'punctuation'],
+  [/"/, 'double quote'],
+  [/'/, 'single_quote'],
+  [/\/\*/, 'm_comment_s'],
+  [/\*/, 'm_comment_e'],
+  [/\/\//, 's_comment'],
+  [/\n/, 'line_b'],
+  [/=|!|<|>|\+|-|\*\/|>|<|\||&/, 'operators'],
 ]);
 
 module.exports = {
