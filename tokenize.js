@@ -46,7 +46,11 @@ function getLexeme(i, code, s_sign_regex){
         q++
       }
       return { value: code.slice(i, q + 1), iterations: q - i};
-    case 'letters and numbers' |'double quote' | 'm_comment_e' | 'line_b':
+    case m_comment_s: 
+      return buildCompoundLexeme(i, code, /\*/);
+    case s_comment:
+      return buildCompoundLexeme(i, code, /\n/);
+    case 'letters and numbers' |'double quote':
        return buildCompoundLexeme(i, code, s_sign_regex);
     default:
      throw new Error('unidentified regular expression');
