@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "dev": "node main.js test.txt",
-    "test": "test"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,8 @@
   "dependencies": {
     "node": "^20.14.0",
     "npm": "^10.8.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
