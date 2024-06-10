@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const { regex_tokens, regex_stopping_signs } = require("regexCodes.js");
 
 let idTable  = new Map(); 
 
@@ -73,42 +74,17 @@ function setId(lex){
   const lex_sha = createSHA256Hash(lex);
   const id_exists = idTable.get(lex_sha);
   if(!id_exists) idTable.set(lex_sha, lex);
-  return {val: lex_sha, code: "id"}; 
+  return {value: lex_sha, type "identifier"}; 
 }
 
-
-
-
-
-function makeToken(lex){    
-    if(identifiers.test(lex)) return setId(lex);
-    if(numbers.test(lex)) return { val: lex, code: 'number' };
-    if(keywords.test(lex)) return { val: lex, code: lex };
-    if(comparison.test(lex)) return { val: lex, code: 'comparison' };
-    if(add.test(lex)) return { val: lex, code: 'add' };
-    if(subtract.test(lex)) return { val: lex, code: 'subtract' };
-    if(multiply_pointer.test(lex)) return { val: lex, code: 'multiply' };
-    if(divide.test(lex)) return { val: lex, code: 'divide' };
-    if(bitwise_and.test(lex)) return { val: lex, code: 'bitwise_and' };
-    if(bitwise_or.test(lex)) return { val: lex, code: 'bitwise_or' };
-    if(bitwise_xor.test(lex)) return { val: lex, code: 'bitwise_xor' };
-    if(bitwise_not.test(lex)) return { val: lex, code: 'bitwise_not' };
-    if(bitwise_shift.test(lex)) return { val: lex, code: lex == "<<" ? 'L_bitwise_shift' : 'R_bitwise_shift'};
-    if(assign.test(lex)) return { val: lex, code: 'assign' };
-    if(compound_assign.test(lex)) return { val: lex, code: 'compound_assign' };
-    if(logical_and.test(lex)) return { val: lex, code: 'logical_and' };
-    if(logical_or.test(lex)) return { val: lex, code: 'logical_or' };
-    if(dot.test(lex)) return {val: lex, code: 'dot'};
-    if(comma.test(lex)) return {val: lex, code: 'comma'} 
-    if(colon.test(lex)) return {val: lex, code: 'colon'};
-    if(semicolon.test(lex)) return {val: lex, code: 'semicolon'};
-    if(arrow.test(lex)) return {val: lex, code: 'arrow'};
-    if(braces.test(lex)) return { val: lex, code: lex === '[' ? 'bc_open' : 'bc_close' };
-    if(parentheses.test(lex)) return { val: lex, code: lex === '(' ? 'p_open' : 'p_close' };
-    if(brackets.test(lex)) return { val: lex, code: lex === '{' ? 'bt_open' : 'bt_close'};
-    if(strings.test(lex)) return { val: lex, code: 'string' };
-    if(char_literal.test(lex)) return { val: lex[1], code: 'char_literal' }; 
-    return { val: lex, code: 'ERROR'};
+function makeToken(lex){
+  const s = regex_tokens.size, token_rules = regex_tokens.keys;
+  for(int i = 0; i < s; i++)
+      if(token_rules[i].test(lex)){
+        const token_type = regex_tokens.get(token_rules[i]);
+        return token_type == 'identifier' ? setId(lex) : { value: lex, type: token_type }; 
+      }; 
+  return { value: lex, type: 'ERROR'};
 }
 
 const empty_space = /\s/;
@@ -121,33 +97,6 @@ const m_comment_e = /\*/;
 const s_comment = /\/\//;
 const line_b = /\n/;
 const operators = /=|!|<|>|\+|-|\*\/|>|<|\||&/;
-const identifiers = /[a-zA-Z_][a-zA-Z0-9_]*/;
-const numbers = /^-?\d+(\.\d+)?([eE][+-]?\d+)?/;
-const keywords = /int|float|double|long|char|short|void|return|if|else|while|for|break|continue/;
-const comparison = /==|!=|<=|>=|<|>/;
-const add = /\+/;
-const subtract = /-/;
-const multiply_pointer = /\*/;
-const divide = /\//;
-const bitwise_and = /&/;
-const bitwise_or = /\|/;
-const bitwise_xor = /\^/;
-const bitwise_not = /~/;
-const bitwise_shift = /<<|>>/;
-const assign = /=/;
-const compound_assign = /\+=|\-=|\*=|\/=|%=|<<=|>>=|&=|\|=|^=/;
-const logical_and = /&&/;
-const logical_or = /\|\|/;
-const dot = /\./;
-const comma = /\,/;
-const colon = /\:/;
-const semicolon = /\;/;
-const arrow = /->/;
-const braces = /\[|\]/;
-const parentheses = /\(|\)/;
-const brackets = /\{|\}/;
-const strings = /\"([^\\\"]|\\["\\bfnrt"\\])*\"/;
-const char_literal = /\'(.)\'/;
 
 function createSHA256Hash(inputString) {
   const hash = crypto.createHash('sha256');
