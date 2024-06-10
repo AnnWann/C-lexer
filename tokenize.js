@@ -1,97 +1,99 @@
 const crypto = require("crypto");
-const { regex_tokens, regex_stopping_signs as stopping_signs } = require("regexCodes.js");
+const { regex_tokens, regex_stopping_signs } = require("./regexCodes");
 
-let idTable  = new Map(); 
+const idTable  = new Map();  
 
 function tokenize(code){
   const tokens = [];
-  let current_char = 0;
-
-  const regex_s_signs = stopping_signs.keys, s_signs_size = stopping_signs.size;
-
   let i = 0;
-  while(i < code_length){
-    for(let q = 0; q < s_signs_size; q++){
-      const s_sign_regex = regex_s_signs[q];
-      if(s_sign_regex.test(code[i]){
-        const lex = getLexeme(i, code, s_sign_name);
+  while(i < code.length){
+    for(const regex of regex_stopping_signs.keys()){
+      if(regex.test(code[i])){
+        const lex = getLexeme(i, code, regex);
         if(!lex.value){
-          i += lex.iterations;
-          continue;
+          i += lex.size;
+          break;
         }
-        tokens.add(makeToken(lex.value));
-        i += lex.iterations;
-        continue;
+        tokens.push(makeToken(lex.value));
+        i += lex.size;
+        break;
       }
     }
   }
+  return tokens;
 }
 
-function getLexeme(i, code, s_sign_regex){
-  const s_sign_name = stopping_signs.get(s_sign_regex);
-  if(!s_sign_name) throw new Error('unidentified regular expression');
-  switch(s_sign_name){
+function getLexeme(i, code, regex){
+  const regex_name = regex_stopping_signs.get(regex);
+  if(!regex_name) throw new Error('unidentified regular expression');
+  switch(regex_name){
     case 'empty space':
-      return { value: undefined, iterations: 1};
+      return { value: undefined, size: 1};
     case 'punctuation':
-      return { value: code[i], iterations: 1};
+      return { value: code[i], size: 1};
     case 'single quote':
       const q = i+2;
-      if(!s_sign_regex.test(code[q]) throw new Error('lexical error - unclosed single quote');
-      return { value: code.slice(i, q + 1), iterations: 2};
+      if(!s_sign_regex.test(code[q])) throw new Error('lexical error - unclosed single quote');
+      return { value: code.slice(i, q + 1), size: 2};
     case 'operators':
-      let q = i+1;
-      while(q < 2){
+      let w = i+1;
+      while(w < 2){
         if(!s_sign_regex.test(code[q])) break;
-        q++
+        w++
       }
-      return { value: code.slice(i, q + 1), iterations: q - i};
-    case m_comment_s: 
-      return buildCompoundLexeme(i, code, /\*/);
-    case s_comment:
-      return buildCompoundLexeme(i, code, /\n/);
-    case 'letters and numbers' |'double quote':
-       return buildCompoundLexeme(i, code, s_sign_regex);
+      return { value: code.slice(i, q + 1), size: q - i};
+    case 'm_comment_s': 
+      return buildCompoundLexeme(i, code, (lex) => /\*/.test(lex), 'm_comment_e');
+    case 's_comment':
+      return buildCompoundLexeme(i, code, (lex) => /\n/.test(lex), 'line_b');
+    case 'letters and numbers':
+      return buildCompoundLexeme(i, code, (lex) => !regex.test(lex), regex_name);
+    case 'double quote':
+      return buildCompoundLexeme(i, code, (lex) => regex.test(lex), regex_name);
     default:
      throw new Error('unidentified regular expression');
   }
 }
 
-function buildCompoundLexeme(i, code, predicate){
+function buildCompoundLexeme(i, code, predicate, regex_name){
   const end = getEndOfLexeme(i, code, predicate);
-  const s_sign_name = stopping_signs.get(s_sign_regex);
-  switch(s_sign_name){
-    case 'letters and numbers' |'double quote':
-      return { value: code.slice(i, end + 1), iterations: end - i};
-    case 'm_comment_e' | 'line_b':
-       return { value: undefined, iterations: end - i};
+  switch(regex_name){
+    case 'letters and numbers':
+      return { value: code.slice(i, end), size: end - i};
+    case 'double quote':
+      return { value: code.slice(i, end), size: end - i};
+    case 'm_comment_e':
+       return { value: undefined, size: end - i};
+    case 'line_b':
+       return { value: undefined, size: end - i};
   }
 }
 
 function getEndOfLexeme(i, code, predicate){
   let q = i+1;
-    while(q < code.length){
-      if(predicate.test(code[q])){
+    while(q <= code.length){
+      if(predicate(code[q]) | !code[q]){
         return q;
       }
+      q++;
     }
   throw new Error('lexical error - missing symbol: ' + predicate);
 }
 
 function setId(lex){
-  const lex_sha = createSHA256Hash(lex);
-  const id_exists = idTable.get(lex_sha);
-  if(!id_exists) idTable.set(lex_sha, lex);
-  return {value: lex_sha, type "identifier"}; 
+  const lex_hash = createSHA256Hash(lex);
+  if(!idTable.get(lex_hash)) idTable.set(lex_hash, lex);
+  return { value: lex_hash, type: 'identifier' }; 
 }
 
 function makeToken(lex){
-  const s = regex_tokens.size, token_rules = regex_tokens.keys;
-  for(let i = 0; i < s; i++)
-      if(token_rules[i].test(lex)){
-        const token_type = regex_tokens.get(token_rules[i]);
+  const s = regex_tokens.size, token_rules = regex_tokens.keys();
+  for(const rule of regex_tokens.keys()){
+      if(rule.test(lex)){
+        const token_type = regex_tokens.get(rule);
         return token_type == 'identifier' ? setId(lex) : { value: lex, type: token_type }; 
-      }; 
+      }
+  }
   return { value: lex, type: 'ERROR'};
 }
 

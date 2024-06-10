@@ -1,8 +1,8 @@
 const regex_tokens = new Map ([
-  [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifiers'],
-  [/^-?\d+(\.\d+)?([eE][+-]?\d+)?/, 'numerals'],
   [/int|float|double|long|char|short|void|return|if|else|while|for|break|continue/, 'keywords'],
-  [= /==|!=|<=|>=|<|>/, 'comparison'],
+  [/^-?\d+(\.\d+)?([eE][+-]?\d+)?/, 'numeral'],
+  [/==|!=|<=|>=|<|>/, 'comparison'],7
+  [/!/, 'deny'],
   [/\+/, 'add'],
   [/-/, 'subtract'],
   [/\*/, 'multiply_pointer'],
@@ -14,21 +14,22 @@ const regex_tokens = new Map ([
   [/<<|>>/, 'bitwise_shift'],
   [/=/, 'assign'],
   [/\+=|\-=|\*=|\/=|%=|<<=|>>=|&=|\|=|^=/, 'compound_assign'],
-  [/&&/ 'logical_and'],
+  [/&&/, 'logical_and'],
   [/\|\|/, 'logical_or'],
   [/\./, 'dot'],
   [/\,/, 'comma'],
   [/\:/, 'colon'],
-  [/\;/, 'semicolon],
+  [/\;/, 'semicolon'],
   [/->/, 'arrow'],
   [/\[/, 'brace_l'],
   [/\]/, 'brace_r'],
   [/\{/, 'bracket_l'],
   [/\}/, 'bracket_r'],
   [/\(/, 'parenthesis_l'],
-  [/\0/, 'parenthesis_r'],
+  [/\)/, 'parenthesis_r'],
   [/\"([^\\\"]|\\["\\bfnrt"\\])*\"/, 'string'],
   [/\'(.)\'/, 'char_literal'],
+  [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
 ]);
 
 const regex_stopping_signs = new Map ([
