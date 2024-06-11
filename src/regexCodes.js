@@ -5,6 +5,7 @@
 const regex_tokens = new Map ([
   [/\bauto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while\b/, 'keyword'],
   [/\"([^\\\"]|\\["\\bfnrt"\\])*\"/, 'string'],
+  [/\'(.)\'/, 'char_literal'],
   [/^-?\d+(\.\d+)?([eE][+-]?\d+)?/, 'numeral'],
   [/->/, 'arrow'],
   [/\+=|\-=|\*=|\/=|%=|<<=|>>=|&=|\|=|\^=/, 'compound_assign'],
@@ -34,7 +35,6 @@ const regex_tokens = new Map ([
   [/\}/, 'bracket_r'],
   [/\(/, 'parenthesis_l'],
   [/\)/, 'parenthesis_r'],
-  [/\'(.)\'/, 'char_literal'],
   [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
 ]);
 
