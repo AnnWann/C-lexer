@@ -1,5 +1,5 @@
-const crypto = require("crypto");
 const { regex_tokens, regex_stopping_signs } = require("./regexCodes");
+const createSHA256Hash = require("./hash");
 
 const idTable  = new Map();  
 
@@ -96,12 +96,6 @@ function makeToken(lex){
       }
   }
   return { value: lex, type: 'ERROR'};
-}
-
-function createSHA256Hash(inputString) {
-  const hash = crypto.createHash('sha256');
-  hash.update(inputString);
-  return hash.digest('hex');
 }
 
 function getKeyByValue(map, value) {

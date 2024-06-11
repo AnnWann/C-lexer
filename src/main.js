@@ -7,17 +7,16 @@ const { readFile } = require('./readFile.js');
 function tokenizeFile(file_address){
   readFile(file_address, (err, data) => {
   if(err) {
-    console.error(err);
-    return;
+    return { err: err };
   }
 
   const tokenList = tokenize(data);
 
-  return StringfyTokenList(tokenList, idTable);
+  return { data: stringfyTokenList(tokenList, idTable) };
 });
 }
 
-function StringfyTokenList(tokenList, idTable){
+function stringfyTokenList(tokenList, idTable){
   return "Token list:\n"
   .concat(
       tokenList
