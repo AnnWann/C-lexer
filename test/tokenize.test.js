@@ -1,49 +1,6 @@
 const createSHA256Hash = require("../src/hash");
 const { tokenize, idTable } = require("../src/tokenize")
 
-const keywords = [
-  'auto',
-  'break',
-  'case',
-  'char', 
-  'const', 
-  'continue', 
-  'default', 
-  'do', 
-  'double', 
-  'else', 
-  'enum', 
-  'extern', 
-  'float', 
-  'for', 
-  'goto', 
-  'if', 
-  'int', 
-  'long', 
-  'register',
-  'return', 
-  'short', 
-  'signed', 
-  'sizeof', 
-  'static', 
-  'struct', 
-  'switch', 
-  'typedef', 
-  'union', 
-  'unsigned', 
-  'void',
-  'volatile', 
-  'while',
-];
-
-const comparisons = [
-  '==', '!=', '<=', '>=', '<', '>',
-]
-
-const compound_assigns = [
-  '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '|=', '^=',
-]
-
 test('keywords test', () => {
   const keywords_tokenized = keywords.map((keyword) => tokenize(keyword).at(0));
   let i = 0;
@@ -257,3 +214,46 @@ test('identifier with numbers test', () => {
   expect(tokenize(value).at(0)).toEqual(expected_token);
   expect(idTable.get(hash)).toBe(value);
 });
+
+const keywords = [
+  'auto',
+  'break',
+  'case',
+  'char', 
+  'const', 
+  'continue', 
+  'default', 
+  'do', 
+  'double', 
+  'else', 
+  'enum', 
+  'extern', 
+  'float', 
+  'for', 
+  'goto', 
+  'if', 
+  'int', 
+  'long', 
+  'register',
+  'return', 
+  'short', 
+  'signed', 
+  'sizeof', 
+  'static', 
+  'struct', 
+  'switch', 
+  'typedef', 
+  'union', 
+  'unsigned', 
+  'void',
+  'volatile', 
+  'while',
+];
+
+const comparisons = [
+  '==', '!=', '<=', '>=', '<', '>',
+]
+
+const compound_assigns = [
+  '+=', '-=', '*=', '/=', '%=', '<<=', '>>=', '&=', '|=', '^=',
+]

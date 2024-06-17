@@ -9,14 +9,17 @@ function tokenize(code){
   while(i < code.length){
     for(const regex of regex_stopping_signs.keys()){
       if(regex.test(code[i])){
+        
         const lex = //Handle negative numbers
           code[i] == '-' && getKeyByValue(regex_tokens, 'numeral').test(code[i+1])
           ? getLexeme(i, code, getKeyByValue(regex_stopping_signs, 'letters and numbers')) //Build lexeme as a numeral 
           : getLexeme(i, code, regex); // Build lexeme normally otherwise
+        
         if(!lex.value){
           i += lex.size;
           break;
         }
+        
         tokens.push(makeToken(lex.value));
         i += lex.size;
         break;
