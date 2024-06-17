@@ -1,14 +1,18 @@
 const { tokenize, idTable } = require('./tokenize.js');
-const { readFile } = require('./readFile.js');
 const fs = require('node:fs');
 
 
 
 function tokenizeFile(file_address){
-  const file = fs.readFileSync(file_address);
-  const tokenList = tokenize(file.toString());
-  return { data: stringfyTokenList(tokenList, idTable) }
-  /*
+  try{
+    const file = fs.readFileSync(file_address);
+    const tokenList = tokenize(file.toString());
+    return { data: stringfyTokenList(tokenList, idTable) }
+  }catch(err){
+    return { err: err };
+  }
+  
+  /*  DEPRICATED
   return new Promise(readFile(file_address, (err, data) => {
   if(err) {
     return { err: err };
