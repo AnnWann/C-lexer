@@ -85,12 +85,6 @@ function getEndOfLexeme(i, code, predicate){
   throw new Error('lexical error - missing symbol: ' + predicate);
 }
 
-function setId(lex){
-  const lex_hash = createSHA256Hash(lex);
-  if(!idTable.get(lex_hash)) idTable.set(lex_hash, lex);
-  return { value: lex_hash, type: 'identifier' }; 
-}
-
 function makeToken(lex){
   for(const rule of regex_tokens.keys()){
       if(rule.test(lex)){
@@ -99,6 +93,12 @@ function makeToken(lex){
       }
   }
   return { value: lex, type: 'ERROR'};
+}
+
+function setId(lex){
+  const lex_hash = createSHA256Hash(lex);
+  if(!idTable.get(lex_hash)) idTable.set(lex_hash, lex);
+  return { value: lex_hash, type: 'identifier' }; 
 }
 
 function getKeyByValue(map, value) {
