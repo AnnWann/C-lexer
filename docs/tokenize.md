@@ -6,18 +6,18 @@ This file contains all the functions that perform the lexical analysis.
 
 > ## Usage
 > This file only exports the function tokenize and the constant idTable. Here are the instructions to use this file.
->> ` const code = "char* code = "this is C code";";  
-const tokens = tokenize(code);  
-console.log("ID TABLE:\n");  
-for(token at Tokens){  
-  console.log("value: " + token.value + " type :" + token.type + "\n");  
-}  
-console.log("ID TABLE:\n");  
-idTable.forEach((key, value) => console.log("key: " + key + " value: " + value)); `
+>> ` const code = "char* code = "this is C code";"; `
+>> ` const tokens = tokenize(code); `
+>> ` console.log("ID TABLE:\n"); `
+>> ` for(token at Tokens){ `
+>>  ` console.log("value: " + token.value + " type :" + token.type + "\n"); `
+>> `} `
+>> ` console.log("ID TABLE:\n"); `
+>>` idTable.forEach((key, value) => console.log("key: " + key + " value: " + value)); `
 >
 > *DO NOT:*
->> ` idTable.forEach( /* do something here */ );  
-const token = tokenize(code) // use idTable before using tokenize `
+>> ` idTable.forEach( /* do something here */ ); ` 
+>> ` const token = tokenize(code) // use idTable before using tokenize `
 >> it won't break but you'll use an empty map.
 >
 
