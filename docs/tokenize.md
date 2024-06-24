@@ -6,8 +6,8 @@ This file contains all the functions that perform the lexical analysis.
 
 > ## Usage
 > This file only exports the function tokenize and the constant idTable. Here are the instructions to use this file.
->> ` const code = "char* code = "this is C code";"; `
->> ` const tokens = tokenize(code); `
+>> ` const code = "char* code = "this is C code";"; `  
+>> ` const tokens = tokenize(code); `  
 >> ` console.log("ID TABLE:\n"); `
 >> ` for(token at Tokens){ `
 >>  ` console.log("value: " + token.value + " type :" + token.type + "\n"); `
