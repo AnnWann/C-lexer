@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>Analisador léxico</title>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Tokenizer de Arquivos</h1>
+    <form id="uploadForm">
+      <input type="file" id="fileInput" name="file" required>
+      <button type="submit">Enviar e Tokenizar</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('fileInput');
+      formData.append('file', fileInput.files[0]);
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const resultDiv = document.getElementById('result');
+
+      if (response.ok) {
+        const resultText = await response.text();
+        displayTokens(resultText);
+      } else {
+        resultDiv.textContent = 'Error: ' + response.statusText;
+      }
+    });
+
+    function displayTokens(tokens) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '';
+
+      tokens.split('\n').forEach(token => {
+        if (token.trim() !== '') {
+          const tokenElement = document.createElement('div');
+          tokenElement.classList.add('token');
+          tokenElement.textContent = token.trim();
+          resultDiv.appendChild(tokenElement);
+        }
+      });
+    }
+  </script>
+
+  <footer>
+    <ul>
+      <li><a href="https://github.com/AnnWann">Uana</a></li>
+      <li><a href="https://github.com/walacelopess">Wallace</a></li>
+      <li><a href="https://github.com/Mxrlla">Marlla</a></li>
+      <li><a href="https://github.com/joao1660">João</a></li>
+    </ul>
+  </footer>
+</body>
+</html>
