@@ -1,5 +1,10 @@
-import { run_state, current_analysis, setNextStep } from "./lexical_analysis";
+import { setNextStep } from "./lexical_analysis";
 import { tokenize } from "./tokenize";
+import { run_state, wrap_current_analysis } from "./types";
+
+export {
+  find_lexeme,
+}
 
 function find_lexeme(run_state: run_state): run_state {
   
@@ -9,7 +14,7 @@ function find_lexeme(run_state: run_state): run_state {
 
   if((curr_char == ' ' || curr_char == '\n') && run_state.running == 'regular') return setNextStep(run_state, sanitize_escape);
 
-  if(!run_state.current_state) return setNextStep(run_state, create_current_state);
+  if(!run_state.current_state) return setNextStep(run_state, wrap_current_analysis);
   
   if(/[A-Za-z0-9]/.test(curr_char)){
     run_state.current_state.lexeme += curr_char;
@@ -26,23 +31,6 @@ function find_lexeme(run_state: run_state): run_state {
   if(running == 'm_comment' || running == 's_comment') setNextStep(run_state, sanitize_comment);
   
   return setNextStep(run_state, sanitize_regular);
-}
-
-function create_current_state(run_state: run_state): run_state{
-  
-  const current_state: current_analysis = 
-      { lexeme: '', 
-        line: run_state.overall_state.line,
-        column: run_state.overall_state.column,
-        status: 'searching'
-      }
-
-  return { 
-    overall_state: run_state.overall_state, 
-    current_state: current_state, 
-    running: run_state.running, 
-    next_step: find_lexeme 
-  };
 }
 
 function sanitize_regular(run_state: run_state): run_state {
