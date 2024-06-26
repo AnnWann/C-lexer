@@ -1,3 +1,4 @@
+import { find_lexeme } from './find_valid_lexeme';
 import { lexical_analysis, token, run_state } from './types'
 
 export {
@@ -30,10 +31,12 @@ function run_analysis(run_state: run_state): run_state {
     return run_state;
   }
 
-  if(run_state.next_step) return run_analysis(run_state.next_step(run_state));
+  if(!run_state.next_step) return setNextStep(run_state, find_lexeme);
+
+  return run_analysis(run_state.next_step(run_state));
 }
 
-function setNextStep(run_state: run_state, next_step: (run_state: run_state) => run_state): run_state{
+function setNextStep(run_state: run_state, next_step: (run_state: run_state) => run_state | undefined): run_state{
   return { 
     overall_state: run_state.overall_state, 
     current_state: run_state.current_state, 
