@@ -1,4 +1,4 @@
-import { is_char_part_of_lexeme } from './find_valid_lexeme';
+import { is_char_part_of_lexeme } from './find_lexeme';
 import { run_state } from './types'
 
 export {
