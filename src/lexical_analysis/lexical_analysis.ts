@@ -1,5 +1,5 @@
 import { find_lexeme } from './find_valid_lexeme';
-import { lexical_analysis, token, run_state, wrap_run_state } from './types'
+import { run_state } from './types'
 
 export {
   run_analysis,
