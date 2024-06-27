@@ -7,7 +7,9 @@ export {
 }
 
 
-
+/**
+ * iterates through the code, applying the next step to the lexical analysis until the end of file
+ */
 function run_analysis(run_state: run_state): run_state {
   
   if(run_state.overall_state.index >= run_state.overall_state.code.length && !(run_state.current_state && run_state.running == 'default')){
@@ -24,6 +26,9 @@ function run_analysis(run_state: run_state): run_state {
   return run_analysis(run_state.next_step(run_state));
 }
 
+/**
+ * injects run_analysis with the next step
+ */
 function setNextStep(run_state: run_state, next_step: (run_state: run_state) => run_state | undefined): run_state{
   run_state.next_step = next_step;
   return run_analysis(run_state);

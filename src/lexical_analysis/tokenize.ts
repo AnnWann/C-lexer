@@ -7,6 +7,9 @@ export {
   tokenize,
 }
 
+/**
+ * reads a lexeme and adds its respective token to the token list
+ */
 function tokenize(run_state: run_state): run_state {
   
   const lexeme = run_state.current_state.lexeme;
@@ -26,6 +29,9 @@ function tokenize(run_state: run_state): run_state {
   run_state.current_state = undefined;
   return setNextStep(run_state, undefined);
 
+/**
+ * builds an identifier token 
+ */
   function setId(): token{
     const lex_hash = createSHA256Hash(lexeme);
     if(!run_state.overall_state.idTable.get(lex_hash)) run_state.overall_state.idTable.set(lex_hash, lexeme);
@@ -33,6 +39,9 @@ function tokenize(run_state: run_state): run_state {
   }
 }
 
+/**
+ * creates SHA256 hash 
+ */
 function createSHA256Hash(inputString: string) {
   const hash = createHash('sha256');
   hash.update(inputString);
