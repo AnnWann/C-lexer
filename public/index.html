@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>Analisador Léxico</title>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Tokenizer de Arquivos</h1>
+    <form id="uploadForm">
+      <input type="file" id="fileInput" name="file" required>
+      <button type="submit" onclick="handleFormSubmit(event)">Enviar e Tokenizar</button>
+    </form>
+    <div id="result">
+      <textarea id="tokenList" rows="10" cols="80" placeholder="Lista de Tokens"></textarea>
+      <textarea id="symbolTable" rows="10" cols="80" placeholder="Tabela de Símbolos"></textarea>
+    </div>
+  </div>
+
+  <script>
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById('fileInput');
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao enviar arquivo: ' + response.statusText);
+        }
+
+        const result = await response.json();
+        displayTokens(result);
+      } catch (error) {
+        console.error('Erro:', error);
+        const tokenListField = document.getElementById('tokenList');
+        const symbolTableField = document.getElementById('symbolTable');
+        tokenListField.value = '';
+        symbolTableField.value = 'Erro ao processar o arquivo: ' + error.message;
+      }
+    }
+
+    function displayTokens(result) {
+      const tokenListField = document.getElementById('tokenList');
+      const symbolTableField = document.getElementById('symbolTable');
+
+      tokenListField.value = result.tokenList;
+      symbolTableField.value = result.symbolTable;
+    }
+  </script>
+
+  <footer>
+    <ul>
+      <li><a href="https://github.com/AnnWann">Uana</a></li>
+      <li><a href="https://github.com/walacelopess">Wallace</a></li>
+      <li><a href="https://github.com/Mxrlla">Marlla</a></li>
+      <li><a href="https://github.com/joao1660">João</a></li>
+    </ul>
+  </footer>
+</body>
+</html>
