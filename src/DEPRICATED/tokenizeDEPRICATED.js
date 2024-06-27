@@ -1,3 +1,5 @@
+//DEPRICATED
+
 const { regex_tokens, regex_stopping_signs } = require("./regexCodes");
 const createSHA256Hash = require("./hash");
 

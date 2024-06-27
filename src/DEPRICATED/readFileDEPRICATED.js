@@ -1,6 +1,5 @@
-/*
-* DEPRICATED
-*/
+//DEPRICATED
+
 const fs = require('node:fs');
 
 function readFile(fileName, callback){

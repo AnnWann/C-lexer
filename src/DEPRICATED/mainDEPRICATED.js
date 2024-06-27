@@ -1,4 +1,6 @@
-const { tokenize, idTable } = require('./tokenize.js');
+//DEPRICATED
+
+const { tokenize, idTable } = require('./tokenizeDEPRICATED.js');
 const fs = require('node:fs');
 
 
