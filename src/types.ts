@@ -19,7 +19,6 @@ type current_analysis = {
   lexeme: string,
   line: number,
   column: number,
-  status: 'searching' | 'done',
 }
 
 type lexical_analysis = {
@@ -29,7 +28,6 @@ type lexical_analysis = {
   index: number,
   line: number,
   column: number,
-  status: 'done' | 'undone',
   err: string[],
 }
 
@@ -46,7 +44,6 @@ function wrap_analysis(code: string): lexical_analysis{
     idTable: new Map<string, string>(), 
     code: code, index: 0, line: 0, 
     column: 0, 
-    status: 'undone', 
     err: new Array<string>() 
   }
 }
@@ -59,7 +56,6 @@ function wrap_run_state(code: string): run_state{
     index: 0, 
     line: 0, 
     column: 0, 
-    status: 'undone', 
     err: new Array<string>() 
   }
   return {
@@ -76,7 +72,6 @@ function wrap_current_analysis(run_state: run_state): run_state{
       { lexeme: '', 
         line: run_state.overall_state.line,
         column: run_state.overall_state.column,
-        status: 'searching'
       }
 
   return { 

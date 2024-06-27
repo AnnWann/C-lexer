@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/tokenizeMoreFunc.ts",
   "scripts": {
-    "dev": "node dist/tokenizeMoreFunc.js",
+    "dev": "node dist/lexical_analysis.js",
     "test": "jest"
   },
   "repository": {

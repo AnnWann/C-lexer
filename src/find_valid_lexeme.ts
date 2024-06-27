@@ -77,7 +77,7 @@ function sanitize_regular(run_state: run_state): run_state {
     return setNextStep(run_state, find_lexeme);
   }
 
-  if(/\{\}\(\)\[\];.,:/.test(curr_char)){
+  if(/\{|\}|\(|\)|\[|\]|;|.|,|:/.test(curr_char)){
 
     if(run_state.current_state.lexeme.length > 0){
       run_state.overall_state.column = run_state.current_state.column;
@@ -174,9 +174,10 @@ function handle_operators(run_state: run_state): run_state{
   let i = 0, operator = "";
 
   for(; i < 3; i++){
-    if(!/=!<>\+-\*\/\|&%\^/.test(code[i]))
+    const curr_index = run_state.overall_state.index + i;
+    if(!/=|!|<|>|\+|-|\*|\/|\||&|%|\^/.test(code[curr_index]))
       break;
-    operator += code[i];
+    operator += code[curr_index];
   }
 
   run_state.current_state.lexeme += operator;

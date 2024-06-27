@@ -8,7 +8,9 @@ export {
 }
 
 function tokenize(run_state: run_state): run_state {
+  
   const lexeme = run_state.current_state.lexeme;
+
   for(const [rule, name] of regex_tokens.entries()){
     if(rule.test(lexeme)){
       const token: token = name == 'identifier' ? setId() : { value: lexeme, type: name };
