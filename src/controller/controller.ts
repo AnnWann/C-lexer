@@ -1,4 +1,4 @@
-import { run_analysis } from "../lexical_analysis/lexical_analysis";
+import { run_analysis } from "../lexical_analysis/run_through_lexical_analysis";
 import { token, wrap_run_state } from "../lexical_analysis/types";
 import * as fs from 'fs';
 import { update_err, update_lexical_analysis_fields } from "../view/view";

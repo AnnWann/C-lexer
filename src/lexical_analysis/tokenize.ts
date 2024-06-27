@@ -1,5 +1,5 @@
 import { createHash }  from "crypto";
-import { setNextStep } from "./lexical_analysis";
+import { setNextStep } from "./run_through_lexical_analysis";
 import { regex_tokens } from "./regexCodes";
 import { token, run_state } from "./types";
 

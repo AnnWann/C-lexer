@@ -1,4 +1,4 @@
-import { setNextStep } from "./lexical_analysis";
+import { setNextStep } from "./run_through_lexical_analysis";
 import { tokenize } from "./tokenize";
 import { run_state, wrap_current_analysis } from "./types";
 
