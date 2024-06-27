@@ -38,6 +38,7 @@ export const regex_tokens = new Map ([
   [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
 ]);
 
+/* DEPRICATED
 const regex_stopping_signs = new Map ([
   [/\s/, 'empty space'],
   [/[A-Za-z_0-9_.]/, 'letters and numbers'],
@@ -51,4 +52,4 @@ const regex_stopping_signs = new Map ([
   [/\{|\}|\(|\)|\[|\]|;|.|,|:/, 'punctuation'],
   
 ]);
-
+*/
