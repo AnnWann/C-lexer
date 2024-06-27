@@ -29,7 +29,7 @@
       formData.append('file', fileInput.files[0]);
 
       try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/analysis', {
           method: 'POST',
           body: formData
         });
@@ -50,9 +50,16 @@
     }
 
     function displayTokens(result) {
+
+      if(result.err){
+        const tokenListField = document.getElementById('tokenList');
+        tokenListField.value = result.err;
+        return;
+      }
+
       const tokenListField = document.getElementById('tokenList');
       const symbolTableField = document.getElementById('symbolTable');
-
+      
       tokenListField.value = result.tokenList;
       symbolTableField.value = result.symbolTable;
     }

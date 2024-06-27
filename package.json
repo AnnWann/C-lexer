@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/tokenizeMoreFunc.ts",
   "scripts": {
-    "dev": "node dist/lexical_analysis.js",
+    "dev": "nodemon dist/router.js",
     "test": "jest"
   },
   "repository": {
@@ -20,7 +20,14 @@
   "homepage": "https://github.com/AnnWann/lexer#readme",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.6",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.11",
     "jest": "^29.7.0",
     "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
   }
 }

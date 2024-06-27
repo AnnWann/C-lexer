@@ -1,32 +1,32 @@
 import { run_analysis } from "../lexical_analysis/run_through_lexical_analysis";
 import { token, wrap_run_state } from "../lexical_analysis/types";
 import * as fs from 'fs';
-import { update_err, update_lexical_analysis_fields } from "../view/view";
 
+export {
+  getLexicalAnalysis
+}
 /**
  * handles the lexicalAnalysis pipeline
  * @async
  */
-async function getLexicalAnalysis(file: string) {
+async function getLexicalAnalysis(file: string): Promise<{err?: string, result?: string[]}> {
   
-  fs.readFile(file, 'utf-8', (err, code) => {
-    
-    if(err) update_err(err.message);
-    
+  try{
+
+    const code = await fs.promises.readFile(file, 'utf-8');
+
     const result = run_analysis(wrap_run_state(code));
 
-    if(result.overall_state.err.length > 0) update_err ( result.overall_state.err.reduce( (prev, curr) => prev + curr + '\n') );
-
-    const [ tokenList, idTable ] = formatLexicalAnalysis(result.overall_state.tokenList, result.overall_state.idTable);
+    if(result.overall_state.err.length > 0) return { err: result.overall_state.err.reduce( (prev, curr) => prev + curr + '\n')}
     
-    update_lexical_analysis_fields(tokenList, idTable);
-  });
-  
+    return { result: formatLexicalAnalysis(result.overall_state.tokenList, result.overall_state.idTable) };
+
+  }catch(err){ return {err}; }
+
 }
 
 /**
  * formats the tokenList and idTable into strings to be shown in the view.
- * @async
  */
 function formatLexicalAnalysis(tokenList: token[], idTable: Map<string, string>): string[]{
 
