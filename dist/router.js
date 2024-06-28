@@ -10,19 +10,21 @@ const app = express();
 const PORT = process.env.PORT;
 const upload = multer();
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html')); // Replace 'index.html' with your actual file name
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 app.post('/analyse', upload.single('file'), async (req, res) => {
     const file = req.file;
     if (!file)
-        res.json({ err: 'could not receive file' });
-    const isNotCFile = file.filename.split('.').pop() !== '.c';
-    if (isNotCFile)
-        res.json({ err: 'file needs to have a .c extension' });
-    const result = await (0, controller_1.getLexicalAnalysis)(file.path);
-    const err = result.err;
+        return res.json({ err: 'could not receive file' });
+    const extension = file.originalname?.split('.').pop();
+    if (extension !== 'c')
+        return res.json({ err: 'file needs to have a .c extension' });
+    const result = await (0, controller_1.getLexicalAnalysis)(file);
+    if (result.err) {
+        return res.json({ err: result.err });
+    }
     const [tokenList, symbolTable] = result.result;
-    res.json(err ? { err } : { tokenList, symbolTable });
+    res.json({ tokenList, symbolTable });
 });
 app.listen(PORT, () => {
     console.log(`[server]: Server is running at http://localhost:${PORT}`);

@@ -13,7 +13,7 @@ async function getLexicalAnalysis(file: string): Promise<{err?: string, result?:
   
   try{
 
-    const code = await fs.promises.readFile(file, 'utf-8');
+    const code = await fs.promises.readFile(file, 'utf-8',);
 
     const result = run_analysis(wrap_run_state(code));
 
