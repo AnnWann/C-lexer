@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenize = tokenize;
-const crypto_1 = require("crypto");
 const run_through_lexical_analysis_1 = require("./run_through_lexical_analysis");
 const regexCodes_1 = require("./regexCodes");
 /**
@@ -26,7 +25,7 @@ function tokenize(run_state) {
      * builds an identifier token
      */
     function setId() {
-        const lex_hash = createSHA256Hash(lexeme);
+        const lex_hash = createHash(lexeme).toString();
         if (!run_state.overall_state.idTable.get(lex_hash))
             run_state.overall_state.idTable.set(lex_hash, lexeme);
         return { value: lex_hash, type: 'identifier' };
@@ -35,8 +34,11 @@ function tokenize(run_state) {
 /**
  * creates SHA256 hash
  */
-function createSHA256Hash(inputString) {
-    const hash = (0, crypto_1.createHash)('sha256');
-    hash.update(inputString);
-    return hash.digest('hex');
+function createHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const charCode = str.charCodeAt(i);
+        hash = (hash << 8) ^ charCode;
+    }
+    return hash & 0xFFFF;
 }

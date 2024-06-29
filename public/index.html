@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="css/style.css" type="text/css">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Analisador Léxico</title>
 </head>
@@ -50,18 +50,22 @@
     }
 
     function displayTokens(result) {
-
-      if(result.err){
-        const tokenListField = document.getElementById('tokenList');
-        tokenListField.value = result.err;
+      console.log(result);
+      const { err, tokenList, symbolTable } = result;
+      console.log('err: ' + err)
+      if(err){
+        console.log('error: erro interno no servidor')
+        const tokenListField = document.getElementById('symbolTable');
+        tokenListField.value = 'error: erro interno no servidor';
         return;
       }
-
+      console.log(tokenList);
+      console.log(symbolTable);
       const tokenListField = document.getElementById('tokenList');
       const symbolTableField = document.getElementById('symbolTable');
       
-      tokenListField.value = result.tokenList;
-      symbolTableField.value = result.symbolTable;
+      tokenListField.value = tokenList;
+      symbolTableField.value = symbolTable;
     }
   </script>
 

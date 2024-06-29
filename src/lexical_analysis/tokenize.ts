@@ -1,4 +1,4 @@
-import { createHash }  from "crypto";
+import { createHash as ch }  from "crypto";
 import { setNextStep } from "./run_through_lexical_analysis";
 import { regex_tokens } from "./regexCodes";
 import { token, run_state } from "./types";
@@ -33,7 +33,7 @@ function tokenize(run_state: run_state): run_state {
  * builds an identifier token 
  */
   function setId(): token{
-    const lex_hash = createSHA256Hash(lexeme);
+    const lex_hash = createHash(lexeme).toString();
     if(!run_state.overall_state.idTable.get(lex_hash)) run_state.overall_state.idTable.set(lex_hash, lexeme);
     return { value: lex_hash, type: 'identifier' }; 
   }
@@ -42,8 +42,11 @@ function tokenize(run_state: run_state): run_state {
 /**
  * creates SHA256 hash 
  */
-function createSHA256Hash(inputString: string) {
-  const hash = createHash('sha256');
-  hash.update(inputString);
-  return hash.digest('hex');
+function createHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const charCode = str.charCodeAt(i);
+    hash = (hash << 8) ^ charCode; 
+  }
+  return hash & 0xFFFF;
 }

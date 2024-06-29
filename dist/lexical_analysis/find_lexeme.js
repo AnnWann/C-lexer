@@ -10,11 +10,11 @@ const types_1 = require("./types");
 function is_char_part_of_lexeme(run_state) {
     const code = run_state.overall_state.code, index = run_state.overall_state.index;
     const curr_char = code[index];
-    if ((curr_char == ' ' || curr_char == '\n') && run_state.running == 'default')
+    if ((curr_char == ' ' || curr_char == '\n' || curr_char == '\r') && run_state.running == 'default')
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, sanitize_escape);
     if (!run_state.current_state)
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, types_1.wrap_current_analysis);
-    if (/[A-Za-z0-9]/.test(curr_char)) {
+    if (/[A-Za-z0-9_]/.test(curr_char)) {
         run_state.current_state.lexeme += curr_char;
         run_state.overall_state.index += 1;
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, is_char_part_of_lexeme);

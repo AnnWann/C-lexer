@@ -15,11 +15,11 @@ function is_char_part_of_lexeme(run_state: run_state): run_state {
 
   const curr_char = code[index];
 
-  if((curr_char == ' ' || curr_char == '\n') && run_state.running == 'default') return setNextStep(run_state, sanitize_escape);
+  if((curr_char == ' ' || curr_char == '\n' || curr_char == '\r') && run_state.running == 'default') return setNextStep(run_state, sanitize_escape);
 
   if(!run_state.current_state) return setNextStep(run_state, wrap_current_analysis);
   
-  if(/[A-Za-z0-9]/.test(curr_char)){
+  if(/[A-Za-z0-9_]/.test(curr_char)){
     run_state.current_state.lexeme += curr_char;
     run_state.overall_state.index += 1;
     return setNextStep(run_state, is_char_part_of_lexeme);

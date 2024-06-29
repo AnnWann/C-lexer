@@ -20,13 +20,15 @@ app.get('/', (req, res) => {
 
 app.post('/analyse', upload.single('file'), async (req, res) => {
   
-  const file = req.file;
-  if(!file) return res.json( {err: 'could not receive file'});
+  const file: Express.Multer.File = req.file;
+  if(!file) return res.json( {err: 'could not receive file'} );
 
   const extension = file.originalname?.split('.').pop();
   if( extension !== 'c' ) return res.json( {err: 'file needs to have a .c extension'});
   
-  const result = await getLexicalAnalysis(file.originalname);
+  const content = Buffer.from(file.buffer).toString('utf-8');
+
+  const result = await getLexicalAnalysis(content);
   
   if(result.err){
     return res.json( { err: result.err } );

@@ -19,7 +19,8 @@ app.post('/analyse', upload.single('file'), async (req, res) => {
     const extension = file.originalname?.split('.').pop();
     if (extension !== 'c')
         return res.json({ err: 'file needs to have a .c extension' });
-    const result = await (0, controller_1.getLexicalAnalysis)(file);
+    const content = Buffer.from(file.buffer).toString('utf-8');
+    const result = await (0, controller_1.getLexicalAnalysis)(content);
     if (result.err) {
         return res.json({ err: result.err });
     }
