@@ -1,3 +1,7 @@
+/*
+ * This file centralizes the handling of requests/responses
+ */
+
 import { run_analysis } from "../lexical_analysis/run_through_lexical_analysis";
 import { token, wrap_run_state } from "../lexical_analysis/types";
 

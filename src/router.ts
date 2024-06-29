@@ -1,3 +1,7 @@
+/*
+ * This file initializes the app and defines its routes.
+ */
+
 import * as dotenv from 'dotenv';
 import * as express from 'express';
 import { Express } from 'express';

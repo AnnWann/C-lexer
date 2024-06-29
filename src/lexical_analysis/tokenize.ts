@@ -1,4 +1,8 @@
-import { createHash as ch }  from "crypto";
+/*
+ * This file is responsible with taking a lexeme and identifying its correct token as well as handle the symbol table
+ */
+
+
 import { setNextStep } from "./run_through_lexical_analysis";
 import { regex_tokens } from "./regexCodes";
 import { token, run_state } from "./types";

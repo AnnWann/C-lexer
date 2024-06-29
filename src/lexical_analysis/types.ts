@@ -1,3 +1,7 @@
+/*
+ * This file defines the base types and has constructors used in this project
+ */
+
 import { is_char_part_of_lexeme } from "./find_lexeme";
 
 export {
