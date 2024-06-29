@@ -28,15 +28,21 @@ app.post('/analyse', upload.single('file'), async (req, res) => {
   
   const content = Buffer.from(file.buffer).toString('utf-8');
 
-  const result = await getLexicalAnalysis(content);
+  try {
+    const result = await getLexicalAnalysis(content);
   
-  if(result.err){
-    return res.json( { err: result.err } );
-  }
+    if(result.err){
+      return res.json( { err: result.err } );
+    }
 
-  const [tokenList, symbolTable] = result.result;
+    const [tokenList, symbolTable] = result.result;
+    
+    res.json( { tokenList, symbolTable });
+  } catch (err) {
+    console.log(err);
+    res.json( { err: 'erro interno no servidor' } );
+  }
   
-  res.json( { tokenList, symbolTable });
 });
 
 

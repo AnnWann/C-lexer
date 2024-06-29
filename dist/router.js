@@ -20,12 +20,18 @@ app.post('/analyse', upload.single('file'), async (req, res) => {
     if (extension !== 'c')
         return res.json({ err: 'file needs to have a .c extension' });
     const content = Buffer.from(file.buffer).toString('utf-8');
-    const result = await (0, controller_1.getLexicalAnalysis)(content);
-    if (result.err) {
-        return res.json({ err: result.err });
+    try {
+        const result = await (0, controller_1.getLexicalAnalysis)(content);
+        if (result.err) {
+            return res.json({ err: result.err });
+        }
+        const [tokenList, symbolTable] = result.result;
+        res.json({ tokenList, symbolTable });
     }
-    const [tokenList, symbolTable] = result.result;
-    res.json({ tokenList, symbolTable });
+    catch (err) {
+        console.log(err);
+        res.json({ err: 'erro interno no servidor' });
+    }
 });
 app.listen(PORT, () => {
     console.log(`[server]: Server is running at http://localhost:${PORT}`);

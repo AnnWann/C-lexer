@@ -48,15 +48,7 @@ function wrap_analysis(code: string): lexical_analysis{
 }
 
 function wrap_run_state(code: string): run_state{
-  const analysis: lexical_analysis = { 
-    tokenList: new Array<token>(), 
-    idTable: new Map<string, string>(), 
-    code: code, 
-    index: 0, 
-    line: 0, 
-    column: 0, 
-    err: new Array<string>() 
-  }
+  const analysis: lexical_analysis = wrap_analysis(code);
   return {
     overall_state: analysis,
     current_state: undefined,

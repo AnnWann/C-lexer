@@ -29,16 +29,16 @@ function tokenize(run_state) {
         if (!run_state.overall_state.idTable.get(lex_hash))
             run_state.overall_state.idTable.set(lex_hash, lexeme);
         return { value: lex_hash, type: 'identifier' };
+        /**
+         * creates 16bit hash
+         */
+        function createHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const charCode = str.charCodeAt(i);
+                hash = (hash << 8) ^ charCode;
+            }
+            return hash & 0xFFFF;
+        }
     }
-}
-/**
- * creates SHA256 hash
- */
-function createHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const charCode = str.charCodeAt(i);
-        hash = (hash << 8) ^ charCode;
-    }
-    return hash & 0xFFFF;
 }

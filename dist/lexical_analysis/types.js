@@ -13,15 +13,7 @@ function wrap_analysis(code) {
     };
 }
 function wrap_run_state(code) {
-    const analysis = {
-        tokenList: new Array(),
-        idTable: new Map(),
-        code: code,
-        index: 0,
-        line: 0,
-        column: 0,
-        err: new Array()
-    };
+    const analysis = wrap_analysis(code);
     return {
         overall_state: analysis,
         current_state: undefined,
