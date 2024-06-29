@@ -4,14 +4,14 @@ const dotenv = require("dotenv");
 const express = require("express");
 const multer = require("multer");
 const controller_1 = require("./controller/controller");
-const path = require("path");
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT;
 const upload = multer();
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+app.use(express.static('public'));
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../public/index.html')); 
+// });
 app.post('/analyse', upload.single('file'), async (req, res) => {
     const file = req.file;
     if (!file)
@@ -29,7 +29,7 @@ app.post('/analyse', upload.single('file'), async (req, res) => {
         res.json({ tokenList, symbolTable });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         res.json({ err: 'erro interno no servidor' });
     }
 });

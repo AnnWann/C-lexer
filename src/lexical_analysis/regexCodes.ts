@@ -35,6 +35,7 @@ export const regex_tokens = new Map ([
   [/\}/, 'bracket_r'],
   [/\(/, 'parenthesis_l'],
   [/\)/, 'parenthesis_r'],
+  [/#/, 'pre-compiler'],
   [/[a-zA-Z_][a-zA-Z0-9_]*/, 'identifier'],
 ]);
 

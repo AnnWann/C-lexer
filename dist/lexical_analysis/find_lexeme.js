@@ -77,6 +77,7 @@ function sanitize_string(run_state) {
         run_state.running = 'default';
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, tokenize_1.tokenize);
     }
+    return (0, run_through_lexical_analysis_1.setNextStep)(run_state, add_curr_char_to_lexeme);
 }
 /**
  * handles the case in which the current char is a stop sign and the analysis is in char mode
@@ -92,6 +93,7 @@ function sanitize_char(run_state) {
               Improper usage of single quotes ('), char literals shouldn't be longer than 1 character`);
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, tokenize_1.tokenize);
     }
+    return (0, run_through_lexical_analysis_1.setNextStep)(run_state, add_curr_char_to_lexeme);
 }
 /**
  * handles the case in which the current char is a stop sign and the analysis is in s_comment or m_comment mode
@@ -100,6 +102,8 @@ function sanitize_comment(run_state) {
     const code = run_state.overall_state.code, index = run_state.overall_state.index, curr_char = code[index];
     const hasEnded = (run_state.running == 's_comment' && curr_char == '\n') ||
         (run_state.running == 'm_comment' && curr_char == '*' && code[index + 1] == '/');
+    if (run_state.running == 'm_comment' && curr_char == '\n')
+        run_state.current_state.line += 1;
     if (hasEnded) {
         run_state.overall_state.index += run_state.running == "m_comment" ? 2 : 1;
         run_state.overall_state.line += run_state.current_state.line;
@@ -108,6 +112,7 @@ function sanitize_comment(run_state) {
         run_state.running = 'default';
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, is_char_part_of_lexeme);
     }
+    return (0, run_through_lexical_analysis_1.setNextStep)(run_state, add_curr_char_to_lexeme);
 }
 /**
  * handles the case in which the current char is a espace sign and the analysis is in default mode
@@ -115,7 +120,12 @@ function sanitize_comment(run_state) {
 function sanitize_escape(run_state) {
     const curr_char = run_state.overall_state.code[run_state.overall_state.index];
     run_state.overall_state.index += 1;
-    run_state.overall_state.line += curr_char == '\n' ? run_state.current_state?.line : 0;
+    run_state.overall_state.line +=
+        curr_char == '\n' ?
+            run_state.current_state ?
+                run_state.current_state.line :
+                1 :
+            0;
     if (!run_state.current_state) {
         return (0, run_through_lexical_analysis_1.setNextStep)(run_state, is_char_part_of_lexeme);
     }
@@ -156,4 +166,13 @@ function handle_operators(run_state) {
     run_state.overall_state.index += i;
     run_state.current_state.column += i;
     return (0, run_through_lexical_analysis_1.setNextStep)(run_state, tokenize_1.tokenize);
+}
+/**
+ * adds the next char to the lexeme
+ */
+function add_curr_char_to_lexeme(run_state) {
+    run_state.current_state.lexeme += run_state.overall_state.code[run_state.overall_state.index];
+    run_state.overall_state.index += 1;
+    run_state.current_state.column += 1;
+    return (0, run_through_lexical_analysis_1.setNextStep)(run_state, is_char_part_of_lexeme);
 }

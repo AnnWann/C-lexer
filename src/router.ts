@@ -12,11 +12,11 @@ const app: Express = express();
 const PORT = process.env.PORT;
 const upload: Multer = multer();
 
+app.use(express.static('public'));
 
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html')); 
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../public/index.html')); 
+// });
 
 app.post('/analyse', upload.single('file'), async (req, res) => {
   
@@ -39,7 +39,7 @@ app.post('/analyse', upload.single('file'), async (req, res) => {
     
     res.json( { tokenList, symbolTable });
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.json( { err: 'erro interno no servidor' } );
   }
   

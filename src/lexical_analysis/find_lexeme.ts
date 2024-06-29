@@ -104,6 +104,8 @@ function sanitize_string(run_state: run_state): run_state {
 
     return setNextStep(run_state, tokenize);
   }
+
+  return setNextStep(run_state, add_curr_char_to_lexeme);
 }
 
 /**
@@ -127,6 +129,7 @@ function sanitize_char(run_state: run_state): run_state {
     return setNextStep(run_state, tokenize);
   }
 
+  return setNextStep(run_state, add_curr_char_to_lexeme);
 }
 
 /**
@@ -139,17 +142,20 @@ function sanitize_comment(run_state: run_state): run_state {
   const hasEnded = 
     (run_state.running == 's_comment' && curr_char == '\n') || 
     (run_state.running == 'm_comment' && curr_char == '*' && code[index + 1] == '/');
+
+  if(run_state.running == 'm_comment' && curr_char == '\n') run_state.current_state.line += 1;
   
+  if(hasEnded){
+    run_state.overall_state.index += run_state.running == "m_comment" ? 2 : 1;
+    run_state.overall_state.line += run_state.current_state.line;
+    run_state.overall_state.column = 0;
+    run_state.current_state = undefined;
+    run_state.running = 'default'
     
-    if(hasEnded){
-      run_state.overall_state.index += run_state.running == "m_comment" ? 2 : 1;
-      run_state.overall_state.line += run_state.current_state.line;
-      run_state.overall_state.column = 0;
-      run_state.current_state = undefined;
-      run_state.running = 'default'
-      
-      return setNextStep(run_state, is_char_part_of_lexeme);
-    }
+    return setNextStep(run_state, is_char_part_of_lexeme);
+  }
+
+  return setNextStep(run_state, add_curr_char_to_lexeme);
 }
 
 /**
@@ -160,7 +166,12 @@ function sanitize_escape(run_state: run_state): run_state {
   const curr_char = run_state.overall_state.code[run_state.overall_state.index];
 
   run_state.overall_state.index += 1;
-  run_state.overall_state.line += curr_char == '\n' ? run_state.current_state?.line : 0;
+  run_state.overall_state.line += 
+    curr_char == '\n' ? 
+    run_state.current_state ? 
+    run_state.current_state.line : 
+    1 : 
+    0;
   
   if(!run_state.current_state){
     return setNextStep(run_state, is_char_part_of_lexeme);
@@ -213,4 +224,15 @@ function handle_operators(run_state: run_state): run_state{
   run_state.current_state.column += i;
   return setNextStep(run_state, tokenize);
     
+}
+
+/**
+ * adds the next char to the lexeme
+ */
+function add_curr_char_to_lexeme(run_state: run_state): run_state {
+  run_state.current_state.lexeme += run_state.overall_state.code[run_state.overall_state.index];
+  run_state.overall_state.index += 1;
+  run_state.current_state.column += 1;
+
+  return setNextStep(run_state, is_char_part_of_lexeme);
 }
