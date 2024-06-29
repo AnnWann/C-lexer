@@ -1,5 +1,5 @@
-const { tokenize } = require('../dist/lexical_analysis/tokenize');
-
+const createSHA256Hash = require("../src/hash");
+const { tokenize, idTable } = require("../src/tokenize")
 
 test('keywords test', () => {
   const keywords_tokenized = keywords.map((keyword) => tokenize(keyword).at(0));
@@ -33,11 +33,6 @@ test('decimal numeral test', () => {
 test('arrow test', () => {
   const expected_token = { value: '->', type: 'arrow' };
   expect(tokenize('->').at(0)).toEqual(expected_token);
-});
-
-test('arrow test', () => {
-  const expected_token = { value: '#', type: 'pre-compiler' };
-  expect(tokenize('#').at(0)).toEqual(expected_token);
 });
 
 test('comparison test', () => {

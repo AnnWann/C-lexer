@@ -1,3 +1,7 @@
+/*
+ * This file takes a run:state and runs through it until EOF
+ */
+
 import { is_char_part_of_lexeme } from './find_lexeme';
 import { run_state } from './types'
 
