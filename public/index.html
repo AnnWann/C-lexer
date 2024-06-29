@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="css/style.css" >
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Analisador Léxico</title>
 </head>
 <body>
   <div class="container">
     <h1 class="title">Tokenizer de Arquivos</h1>
-    <form id="uploadForm">
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
       <input type="file" id="fileInput" name="file" required>
       <button type="submit" onclick="handleFormSubmit(event)">Enviar e Tokenizar</button>
     </form>
@@ -29,13 +29,13 @@
       formData.append('file', fileInput.files[0]);
 
       try {
-        const response = await fetch('/upload', {
+        const response = await fetch('/analyse', {
           method: 'POST',
           body: formData
         });
 
         if (!response.ok) {
-          throw new Error('Erro ao enviar arquivo: ' + response.statusText);
+          throw new Error('1: Erro ao enviar arquivo: ' + response.statusText);
         }
 
         const result = await response.json();
@@ -45,16 +45,27 @@
         const tokenListField = document.getElementById('tokenList');
         const symbolTableField = document.getElementById('symbolTable');
         tokenListField.value = '';
-        symbolTableField.value = 'Erro ao processar o arquivo: ' + error.message;
+        symbolTableField.value = error;
       }
     }
 
     function displayTokens(result) {
+      console.log(result);
+      const { err, tokenList, symbolTable } = result;
+      console.log('err: ' + err)
+      if(err){
+        console.log('error: erro interno no servidor')
+        const tokenListField = document.getElementById('symbolTable');
+        tokenListField.value = 'error: erro interno no servidor';
+        return;
+      }
+      console.log(tokenList);
+      console.log(symbolTable);
       const tokenListField = document.getElementById('tokenList');
       const symbolTableField = document.getElementById('symbolTable');
-
-      tokenListField.value = result.tokenList;
-      symbolTableField.value = result.symbolTable;
+      
+      tokenListField.value = tokenList;
+      symbolTableField.value = symbolTable;
     }
   </script>
 
