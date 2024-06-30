@@ -1,4 +1,7 @@
 "use strict";
+/*
+ * This file defines the base types and has constructors used in this project
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.wrap_current_analysis = wrap_current_analysis;
 exports.wrap_run_state = wrap_run_state;

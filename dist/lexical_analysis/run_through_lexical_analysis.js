@@ -1,4 +1,7 @@
 "use strict";
+/*
+ * This file takes a run:state and runs through it until EOF
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run_analysis = run_analysis;
 exports.setNextStep = setNextStep;

@@ -1,4 +1,7 @@
 "use strict";
+/*
+ * This file initializes the app and defines its routes.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = require("dotenv");
 const express = require("express");

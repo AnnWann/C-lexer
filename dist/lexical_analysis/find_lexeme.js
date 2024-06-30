@@ -1,4 +1,7 @@
 "use strict";
+/*
+ * This file is responsible with building a valid lexeme out of the source content
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.is_char_part_of_lexeme = is_char_part_of_lexeme;
 const run_through_lexical_analysis_1 = require("./run_through_lexical_analysis");

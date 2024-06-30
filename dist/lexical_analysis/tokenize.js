@@ -1,4 +1,7 @@
 "use strict";
+/*
+ * This file is responsible with taking a lexeme and identifying its correct token as well as handle the symbol table
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tokenize = tokenize;
 const run_through_lexical_analysis_1 = require("./run_through_lexical_analysis");
