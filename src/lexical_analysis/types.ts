@@ -6,8 +6,8 @@ import { is_char_part_of_lexeme } from "./find_lexeme";
 
 export {
   token,
-  current_analysis,
-  lexical_analysis,
+  current_lexeme as current_analysis,
+  lexical_result as lexical_analysis,
   run_state,
   wrap_current_analysis,
   wrap_run_state
@@ -16,62 +16,66 @@ export {
 type token = {
   value: string,
   type: string,
+  line: number,
+  column: number,
 };
 
-type current_analysis = {
+type current_lexeme = {
   lexeme: string,
   line: number,
   column: number,
 }
 
-type lexical_analysis = {
-  tokenList: token[],
-  idTable: Map<string, string>
+type lexical_parser = {
+  lexemes: string[],
   code: string, 
   index: number,
   line: number,
   column: number,
-  err: string[],
 }
 
+type lexical_result = {
+  tokenList: token[],
+  idTable: Map<string, string>,
+  current_lexeme?: current_lexeme,
+}
 type run_state = {
-  overall_state: lexical_analysis,
-  current_state: current_analysis | undefined,
+  result?: lexical_result;
+  lexemes: lexical_parser,
   running: 'default' | 'string' | 's_comment' | 'm_comment' | 'char',
-  next_step: (run_state: run_state) => run_state | undefined,
+  next_step?: (run_state: run_state) => run_state,
 }
 
-function wrap_analysis(code: string): lexical_analysis{
+function wrap_lexical_parser(code: string): lexical_parser{
+  return {
+    lexemes: new Array<string>(),
+    code: code, 
+    index: 0,
+    line: 0,
+    column: 0,
+  }
+}
+
+function wrap_lexical_result(): lexical_result{
   return { 
     tokenList: new Array<token>(), 
     idTable: new Map<string, string>(), 
-    code: code, index: 0, line: 0, 
-    column: 0, 
-    err: new Array<string>() 
+    current_lexeme: undefined
   }
 }
 
 function wrap_run_state(code: string): run_state{
-  const analysis: lexical_analysis = wrap_analysis(code);
+  const parser: lexical_parser = wrap_lexical_parser(code);
   return {
-    overall_state: analysis,
-    current_state: undefined,
+    result: undefined,
+    lexemes: parser,
     running: 'default',
-    next_step: undefined
   }
 }
 
 function wrap_current_analysis(run_state: run_state): run_state{
-  
-  const current_state: current_analysis = 
-      { lexeme: '', 
-        line: run_state.overall_state.line,
-        column: run_state.overall_state.column,
-      }
-
   return { 
-    overall_state: run_state.overall_state, 
-    current_state: current_state, 
+    lexemes: run_state.lexemes, 
     running: run_state.running, 
     next_step: is_char_part_of_lexeme 
   };

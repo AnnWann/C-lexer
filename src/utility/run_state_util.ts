@@ -23,18 +23,18 @@ function formatLexicalAnalysis(tokenList: token[], idTable: Map<string, string>)
 }
 
 function join_run_state(left: run_state, right: run_state){
-  const n = wrap_run_state(left.overall_state.code.concat(right.overall_state.code));
-  n.overall_state.tokenList = left.overall_state.tokenList.concat(right.overall_state.tokenList);
-  n.overall_state.err = left.overall_state.err.concat(right.overall_state.err);
+  const n = wrap_run_state(left.lexemes.code.concat(right.lexemes.code));
+  n.lexemes.tokenList = left.lexemes.tokenList.concat(right.lexemes.tokenList);
+  n.lexemes.err = left.lexemes.err.concat(right.lexemes.err);
   
-  const idTable = left.overall_state.idTable;
+  const idTable = left.lexemes.idTable;
   
-  right.overall_state.idTable.forEach( (val, key) => {
+  right.lexemes.idTable.forEach( (val, key) => {
     if(!idTable.has(key)) idTable.set(key, val);
   });
   
 
-  n.overall_state.idTable = idTable;
+  n.lexemes.idTable = idTable;
 
   return n;
 }

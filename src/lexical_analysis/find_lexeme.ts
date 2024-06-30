@@ -15,7 +15,7 @@ export {
  */
 function is_char_part_of_lexeme(run_state: run_state): run_state {
   
-  const code = run_state.overall_state.code, index = run_state.overall_state.index;
+  const code = run_state.lexemes.code, index = run_state.lexemes.index;
 
   const curr_char = code[index];
 
@@ -25,7 +25,7 @@ function is_char_part_of_lexeme(run_state: run_state): run_state {
   
   if(/[A-Za-z0-9_]/.test(curr_char)){
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     return setNextStep(run_state, is_char_part_of_lexeme);
   }
 
@@ -45,12 +45,12 @@ function is_char_part_of_lexeme(run_state: run_state): run_state {
  */
 function sanitize_default(run_state: run_state): run_state {
   
-  const curr_char = run_state.overall_state.code[run_state.overall_state.index], next_char = run_state.overall_state.code[run_state.overall_state.index + 1];
+  const curr_char = run_state.lexemes.code[run_state.lexemes.index], next_char = run_state.lexemes.code[run_state.lexemes.index + 1];
 
   if(curr_char == '\"'){
 
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.current_state.column += 1;
     run_state.running = 'string';
 
@@ -60,7 +60,7 @@ function sanitize_default(run_state: run_state): run_state {
   if(curr_char == '\''){
 
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.current_state.column += 1;
     run_state.running = 'char';
 
@@ -70,7 +70,7 @@ function sanitize_default(run_state: run_state): run_state {
   if(curr_char == '/' && next_char == '/'){
     
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.current_state.column += 1;
     run_state.running = 's_comment';
 
@@ -80,7 +80,7 @@ function sanitize_default(run_state: run_state): run_state {
   if(curr_char == '/' && next_char == '/*'){
     
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.current_state.column += 1;
     run_state.running = 'm_comment';
 
@@ -97,12 +97,12 @@ function sanitize_default(run_state: run_state): run_state {
  */
 function sanitize_string(run_state: run_state): run_state {
   
-  const curr_char = run_state.overall_state.code[run_state.overall_state.index];
+  const curr_char = run_state.lexemes.code[run_state.lexemes.index];
  
   if(curr_char == '\"') {
 
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.current_state.column += 1;
     run_state.running = 'default';
 
@@ -117,15 +117,15 @@ function sanitize_string(run_state: run_state): run_state {
  */
 function sanitize_char(run_state: run_state): run_state {
   
-  const curr_char = run_state.overall_state.code[run_state.overall_state.index];
+  const curr_char = run_state.lexemes.code[run_state.lexemes.index];
 
   if(curr_char == '\'') {
     run_state.current_state.lexeme += curr_char;
-    run_state.overall_state.index += 1;
+    run_state.lexemes.index += 1;
     run_state.running = 'default';
 
     if(run_state.current_state.lexeme.length > 3) 
-      run_state.overall_state.err.push(
+      run_state.lexemes.err.push(
               `at ${run_state.current_state.line}, ${run_state.current_state.column}. 
               Improper usage of single quotes ('), char literals shouldn't be longer than 1 character`
     );
@@ -141,7 +141,7 @@ function sanitize_char(run_state: run_state): run_state {
  */
 function sanitize_comment(run_state: run_state): run_state {
 
-  const code = run_state.overall_state.code, index = run_state.overall_state.index, curr_char = code[index];
+  const code = run_state.lexemes.code, index = run_state.lexemes.index, curr_char = code[index];
 
   const hasEnded = 
     (run_state.running == 's_comment' && curr_char == '\n') || 
@@ -150,9 +150,9 @@ function sanitize_comment(run_state: run_state): run_state {
   if(run_state.running == 'm_comment' && curr_char == '\n') run_state.current_state.line += 1;
   
   if(hasEnded){
-    run_state.overall_state.index += run_state.running == "m_comment" ? 2 : 1;
-    run_state.overall_state.line += run_state.current_state.line;
-    run_state.overall_state.column = 0;
+    run_state.lexemes.index += run_state.running == "m_comment" ? 2 : 1;
+    run_state.lexemes.line += run_state.current_state.line;
+    run_state.lexemes.column = 0;
     run_state.current_state = undefined;
     run_state.running = 'default'
     
@@ -167,10 +167,10 @@ function sanitize_comment(run_state: run_state): run_state {
  */
 function sanitize_escape(run_state: run_state): run_state {
 
-  const curr_char = run_state.overall_state.code[run_state.overall_state.index];
+  const curr_char = run_state.lexemes.code[run_state.lexemes.index];
 
-  run_state.overall_state.index += 1;
-  run_state.overall_state.line += 
+  run_state.lexemes.index += 1;
+  run_state.lexemes.line += 
     curr_char == '\n' ? 
     run_state.current_state ? 
     run_state.current_state.line : 
@@ -181,7 +181,7 @@ function sanitize_escape(run_state: run_state): run_state {
     return setNextStep(run_state, is_char_part_of_lexeme);
   }
   
-  run_state.overall_state.column += run_state.current_state.column;
+  run_state.lexemes.column += run_state.current_state.column;
   return setNextStep(run_state, tokenize);
 }
 
@@ -190,15 +190,15 @@ function sanitize_escape(run_state: run_state): run_state {
  */
 function handle_ponctuation(run_state: run_state): run_state {
 
-  const curr_char = run_state.overall_state.code[run_state.overall_state.index];
+  const curr_char = run_state.lexemes.code[run_state.lexemes.index];
 
   if(run_state.current_state.lexeme.length > 0){
-    run_state.overall_state.column = run_state.current_state.column;
+    run_state.lexemes.column = run_state.current_state.column;
     return setNextStep(run_state, tokenize);
   }
 
   run_state.current_state.lexeme += curr_char;
-  run_state.overall_state.index += 1;
+  run_state.lexemes.index += 1;
   run_state.current_state.column += run_state.current_state.column;
   return setNextStep(run_state, tokenize);
 }
@@ -208,23 +208,23 @@ function handle_ponctuation(run_state: run_state): run_state {
 function handle_operators(run_state: run_state): run_state{
 
   if(run_state.current_state.lexeme.length > 0){
-    run_state.overall_state.column = run_state.current_state.column;
+    run_state.lexemes.column = run_state.current_state.column;
     return setNextStep(run_state, tokenize);
   }
 
-  const code = run_state.overall_state.code;
+  const code = run_state.lexemes.code;
 
   let i = 0, operator = "";
 
   for(; i < 3; i++){
-    const curr_index = run_state.overall_state.index + i;
+    const curr_index = run_state.lexemes.index + i;
     if(!/=|!|<|>|\+|-|\*|\/|\||&|%|\^/.test(code[curr_index]))
       break;
     operator += code[curr_index];
   }
 
   run_state.current_state.lexeme += operator;
-  run_state.overall_state.index += i;
+  run_state.lexemes.index += i;
   run_state.current_state.column += i;
   return setNextStep(run_state, tokenize);
     
@@ -234,8 +234,8 @@ function handle_operators(run_state: run_state): run_state{
  * adds the next char to the lexeme
  */
 function add_curr_char_to_lexeme(run_state: run_state): run_state {
-  run_state.current_state.lexeme += run_state.overall_state.code[run_state.overall_state.index];
-  run_state.overall_state.index += 1;
+  run_state.current_state.lexeme += run_state.lexemes.code[run_state.lexemes.index];
+  run_state.lexemes.index += 1;
   run_state.current_state.column += 1;
 
   return setNextStep(run_state, is_char_part_of_lexeme);

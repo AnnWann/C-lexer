@@ -28,9 +28,9 @@ async function getLexicalAnalysis(buffer: string): Promise<{err?: string, result
       split_code
     );
 
-  if(result.overall_state.err.length > 0) return { err: result.overall_state.err.reduce( (prev, curr) => prev + curr + '\n')}
+  if(result.lexemes.err.length > 0) return { err: result.lexemes.err.reduce( (prev, curr) => prev + curr + '\n')}
   
-  return { result: formatLexicalAnalysis(result.overall_state.tokenList, result.overall_state.idTable) };
+  return { result: formatLexicalAnalysis(result.lexemes.tokenList, result.lexemes.idTable) };
 
 }
 
