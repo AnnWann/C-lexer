@@ -3,7 +3,7 @@
  */
 
 
-import { setNextStep } from "./run_through_lexical_analysis";
+import { run, setNextStep } from "./run_through_lexical_analysis";
 import { regex_tokens } from "./regexCodes";
 import { token, run_state } from "./types";
 
@@ -16,30 +16,35 @@ export {
  */
 function tokenize(run_state: run_state): run_state {
   
-  const lexeme = run_state.current_state.lexeme;
+  const lexeme = run_state.parser.lexemes[run_state.result.index];
 
+  if(lexeme.literal){
+    const token: token = { value: lexeme.value, type: 'literal', start: lexeme.start, end: lexeme.end };
+    run_state.result.tokenList.push(token);
+    run_state.result.index += 1;
+    return setNextStep(run_state, tokenize);
+  }
   for(const [rule, name] of regex_tokens.entries()){
-    if(rule.test(lexeme)){
-      const token: token = name == 'identifier' ? setId() : { value: lexeme, type: name };
-      run_state.lexemes.tokenList.push(token);
-      run_state.current_state = undefined;
-      return setNextStep(run_state, undefined);
+    if(rule.test(lexeme.value)){
+      const token: token = (name === 'identifier') ? setId() : { value: lexeme.value, type: name, start: lexeme.start, end: lexeme.end};
+      run_state.result.tokenList.push(token);
+      run_state.result.index += 1;
+      return setNextStep(run_state, tokenize);
     } 
   }
 
-  run_state.lexemes.err.push(`at ${run_state.current_state.line}, ${run_state.current_state.column}: Couldn't find a definition for ${lexeme}`);
-  const token = { value: lexeme, type: 'ERROR' };
-  run_state.lexemes.tokenList.push(token);
-  run_state.current_state = undefined;
-  return setNextStep(run_state, undefined);
+  const token: token = { value: lexeme.value, type: 'ERROR', start: lexeme.start, end: lexeme.end };
+  run_state.result.tokenList.push(token);
+  run_state.result.index += 1;
+  return setNextStep(run_state, tokenize);
 
 /**
  * builds an identifier token 
  */
   function setId(): token{
-    const lex_hash = createHash(lexeme).toString();
-    if(!run_state.lexemes.idTable.get(lex_hash)) run_state.lexemes.idTable.set(lex_hash, lexeme);
-    return { value: lex_hash, type: 'identifier' };
+    const lex_hash = createHash(lexeme.value).toString();
+    if(!run_state.result.idTable.get(lex_hash)) run_state.result.idTable.set(lex_hash, lexeme.value);
+    return { value: lex_hash, type: 'identifier', start: lexeme.start, end: lexeme.end };
     
   /**
    * creates 16bit hash 

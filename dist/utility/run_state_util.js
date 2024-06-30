@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.formatLexicalAnalysis = formatLexicalAnalysis;
-exports.join_run_state = join_run_state;
+exports.join_lexemes = join_lexemes;
+exports.join_tokens = join_tokens;
 exports.split_code = split_code;
-const types_1 = require("../lexical_analysis/types");
 /**
  * formats the tokenList and idTable into strings to be shown in the view.
  */
@@ -16,16 +16,37 @@ function formatLexicalAnalysis(tokenList, idTable) {
         .reduce((prev, curr) => prev + '\n' + curr + '\n');
     return [t, i];
 }
-function join_run_state(left, right) {
-    const n = (0, types_1.wrap_run_state)(left.overall_state.code.concat(right.overall_state.code));
-    n.overall_state.tokenList = left.overall_state.tokenList.concat(right.overall_state.tokenList);
-    n.overall_state.err = left.overall_state.err.concat(right.overall_state.err);
-    const idTable = left.overall_state.idTable;
-    right.overall_state.idTable.forEach((val, key) => {
-        if (!idTable.has(key))
-            idTable.set(key, val);
-    });
-    n.overall_state.idTable = idTable;
+function join_lexemes(left, right) {
+    const L_lexemes = left.parser.lexemes, L_size = left.parser.lexemes.length;
+    if (L_lexemes[L_size - 1].literal) {
+        const R_lexemes = right.parser.lexemes, R_size = right.parser.lexemes.length;
+        const char = L_lexemes[L_size - 2].value;
+        const type_of_literal = char === '/' ? '\n' :
+            char === '\'' || char === '\"' ? char :
+                '*';
+        while (R_lexemes[0].value !== type_of_literal) {
+            const first = R_lexemes.shift().value;
+            R_lexemes[0].value = first + R_lexemes[0].value;
+        }
+        const right_half = R_lexemes.shift(), left_half = L_lexemes[L_size - 1];
+        left_half.value += right_half.value;
+        left_half.end = right_half.end;
+        left.parser.lexemes[L_size - 1] = left_half;
+    }
+    const n = left;
+    n.parser.code = left.parser.code.concat(right.parser.code);
+    n.parser.lexemes = left.parser.lexemes.concat(right.parser.lexemes);
+    return n;
+}
+function join_tokens(left, right) {
+    console.log('l_size: ' + left.result.tokenList.length + '\nr_size: ' + right.result.tokenList.length);
+    const n = left;
+    n.result.tokenList = n.result.tokenList.concat(right.result.tokenList);
+    for (const [key, value] of right.result.idTable) {
+        if (!left.result.idTable.has(key)) {
+            left.result.idTable.set(key, value);
+        }
+    }
     return n;
 }
 function split_code(code) {
@@ -34,6 +55,7 @@ function split_code(code) {
     while (left > 0 && /[A-Za-z0-9_]/.test(code[left])) {
         left--;
     }
+    return [code.slice(0, left), code.slice(left, code.length)];
     // Handle strings and comments at join
     // let isInStringOrComment = false;
     // const char = code[0];
@@ -54,5 +76,4 @@ function split_code(code) {
     //     if(char === '\r') i++;
     //   }
     // }
-    return [code.slice(0, left), code.slice(left, code.length)];
 }

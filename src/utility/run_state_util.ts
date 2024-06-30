@@ -1,8 +1,9 @@
-import { run_state, token, wrap_run_state } from "../lexical_analysis/types";
+import { run_state, token } from "../lexical_analysis/types";
 
 export {
   formatLexicalAnalysis,
-  join_run_state,
+  join_lexemes,
+  join_tokens,
   split_code
 }
 
@@ -22,19 +23,47 @@ function formatLexicalAnalysis(tokenList: token[], idTable: Map<string, string>)
   return [t, i];
 }
 
-function join_run_state(left: run_state, right: run_state){
-  const n = wrap_run_state(left.lexemes.code.concat(right.lexemes.code));
-  n.lexemes.tokenList = left.lexemes.tokenList.concat(right.lexemes.tokenList);
-  n.lexemes.err = left.lexemes.err.concat(right.lexemes.err);
-  
-  const idTable = left.lexemes.idTable;
-  
-  right.lexemes.idTable.forEach( (val, key) => {
-    if(!idTable.has(key)) idTable.set(key, val);
-  });
-  
+function join_lexemes(left: run_state, right: run_state){
 
-  n.lexemes.idTable = idTable;
+  const L_lexemes = left.parser.lexemes, L_size = left.parser.lexemes.length;
+  if(L_lexemes[L_size - 1].literal){
+    const R_lexemes = right.parser.lexemes, R_size = right.parser.lexemes.length
+    const char = L_lexemes[L_size - 2].value;
+    const type_of_literal = 
+      char === '/' ? '\n' :
+      char === '\'' || char === '\"' ? char :
+      '*'
+    
+    while(R_lexemes[0].value !== type_of_literal){
+      const first = R_lexemes.shift().value;
+      R_lexemes[0].value = first + R_lexemes[0].value
+    }
+
+    const right_half = R_lexemes.shift(), left_half = L_lexemes[L_size - 1]
+    left_half.value += right_half.value;
+    left_half.end = right_half.end;
+    left.parser.lexemes[L_size - 1] = left_half;
+  }
+
+  const n = left;
+  n.parser.code = left.parser.code.concat(right.parser.code);
+
+  n.parser.lexemes = left.parser.lexemes.concat(right.parser.lexemes)
+  
+  return n;
+}
+
+function join_tokens(left: run_state, right: run_state){
+
+  console.log('l_size: ' + left.result.tokenList.length + '\nr_size: ' + right.result.tokenList.length);
+  const n = left;
+  n.result.tokenList = n.result.tokenList.concat(right.result.tokenList);
+  
+  for (const [key, value] of right.result.idTable) {
+    if (!left.result.idTable.has(key)) { 
+      left.result.idTable.set(key, value);
+    }
+  }
 
   return n;
 }
