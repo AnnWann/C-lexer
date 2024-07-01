@@ -10,6 +10,8 @@ export const regex_tokens = new Map ([
   [/->/, 'arrow'],
   [/\+=|\-=|\*=|\/=|%=|<<=|>>=|&=|\|=|\^=/, 'compound_assign'],
   [/<<|>>/, 'bitwise_shift'],
+  [/"/, 'double_quotes'],
+  [/'/, 'single_quotes'],
   [/==|!=|<=|>=|<|>/, 'comparison'],
   [/&&/, 'logical_and'],
   [/\+\+/, 'increment'],

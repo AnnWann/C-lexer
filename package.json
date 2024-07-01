@@ -4,8 +4,9 @@
   "description": "",
   "main": "src/tokenizeMoreFunc.ts",
   "scripts": {
-    "dev": "nodemon dist/router.js",
-    "test": "jest"
+    "dev": "npm run build && nodemon dist/router.js",
+    "test": "jest",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

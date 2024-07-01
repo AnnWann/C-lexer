@@ -8,7 +8,7 @@ import { Express } from 'express';
 import { Multer } from 'multer';
 import multer = require('multer');
 import { getLexicalAnalysis } from './controller/controller';
-import path = require('path');
+
 
 dotenv.config();
 

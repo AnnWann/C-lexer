@@ -3,76 +3,87 @@
  */
 
 import { is_char_part_of_lexeme } from "./find_lexeme";
+import { run, setNextStep } from "./run_through_lexical_analysis";
 
 export {
   token,
-  current_analysis,
-  lexical_analysis,
+  lexeme,
+  lexical_result,
   run_state,
-  wrap_current_analysis,
+  wrap_current_lexeme,
   wrap_run_state
 }
 
 type token = {
   value: string,
-  type: string,
+  type: string
+  start: { line: number, column: number}
+  end: { line: number, column: number}
 };
 
-type current_analysis = {
-  lexeme: string,
-  line: number,
-  column: number,
+type lexeme = {
+  value: string,
+  start: { line: number, column: number},
+  end: { line: number, column: number},
+  literal?: boolean
 }
 
-type lexical_analysis = {
-  tokenList: token[],
-  idTable: Map<string, string>
+type lexical_parser = {
+  lexemes: lexeme[],
   code: string, 
   index: number,
-  line: number,
-  column: number,
-  err: string[],
+  position: { line: number, column: number}
+  current_lexeme?: lexeme,
+}
+
+type lexical_result = {
+  tokenList: token[],
+  idTable: Map<string, string>,
+  index: number
 }
 
 type run_state = {
-  overall_state: lexical_analysis,
-  current_state: current_analysis | undefined,
-  running: 'default' | 'string' | 's_comment' | 'm_comment' | 'char',
-  next_step: (run_state: run_state) => run_state | undefined,
+  result: lexical_result;
+  parser: lexical_parser,
+  running: 'default' | 'string' | 's_comment' | 'm_comment',
+  stop_condition: (run_state: run_state) => boolean,
+  next_step?: (run_state: run_state) => run_state,
 }
 
-function wrap_analysis(code: string): lexical_analysis{
+function wrap_current_lexeme(run_state: run_state): run_state{
+  run_state.parser.current_lexeme = {
+    value: '',
+    start: run_state.parser.position,
+    end: run_state.parser.position
+  }
+  return setNextStep(run_state, is_char_part_of_lexeme);
+}
+
+function wrap_lexical_parser(code: string): lexical_parser{
+  return {
+    lexemes: new Array<lexeme>(),
+    code: code, 
+    index: 0,
+    position: { line: 0, column: 0}
+  }
+}
+
+function wrap_lexical_result(): lexical_result{
   return { 
     tokenList: new Array<token>(), 
     idTable: new Map<string, string>(), 
-    code: code, index: 0, line: 0, 
-    column: 0, 
-    err: new Array<string>() 
+    index: 0,
   }
 }
 
-function wrap_run_state(code: string): run_state{
-  const analysis: lexical_analysis = wrap_analysis(code);
+function wrap_run_state(code: string, stop_condition?: (run_state: run_state) => boolean, next_step?: (run_state: run_state) => run_state): run_state{
+  const parser: lexical_parser = wrap_lexical_parser(code);
   return {
-    overall_state: analysis,
-    current_state: undefined,
+    result: wrap_lexical_result(),
+    parser: parser,
     running: 'default',
-    next_step: undefined
+    stop_condition,
+    next_step,
   }
 }
 
-function wrap_current_analysis(run_state: run_state): run_state{
-  
-  const current_state: current_analysis = 
-      { lexeme: '', 
-        line: run_state.overall_state.line,
-        column: run_state.overall_state.column,
-      }
-
-  return { 
-    overall_state: run_state.overall_state, 
-    current_state: current_state, 
-    running: run_state.running, 
-    next_step: is_char_part_of_lexeme 
-  };
-}
